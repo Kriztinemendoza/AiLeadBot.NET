@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lead Bot Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="mb-4">📞 Lead Bot Dashboard</h1>
+
+        <div class="card mb-4">
+            <div class="card-header">New Outbound Call</div>
+            <div class="card-body">
+                <form id="callForm">
+                    <div class="mb-3">
+                        <label for="leadName" class="form-label">Lead Name</label>
+                        <input type="text" class="form-control" id="leadName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" 
+                               placeholder="+1..." required
+                               value="+639612237852"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Start Call</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">📋 Call Logs</div>
+            <div class="card-body">
+                <ul id="callLogs" class="list-group">
+                    <!-- Dynamic call logs go here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const callForm = document.getElementById('callForm');
+    const callLogs = document.getElementById('callLogs');
+
+    callForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('leadName').value;
+      const phone = document.getElementById('phoneNumber').value;
+
+      const response = await fetch('/api/start-call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone })
+      });
+
+      const result = await response.json();
+
+      const logItem = document.createElement('li');
+      logItem.className = 'list-group-item';
+      logItem.innerText = `📞 Called ${name} (${phone}) - ${result.status}`;
+      callLogs.prepend(logItem);
+
+      callForm.reset();
+    });
+    </script>
+</body>
+</html>
